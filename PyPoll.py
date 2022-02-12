@@ -1,5 +1,6 @@
 #Add our dependencies
 import csv
+from distutils import text_file
 import os
 
 # Define path to input file
@@ -50,46 +51,58 @@ with open(input_file_path) as election_data:
 
         # Add a vote each time the candidate appears
         candidate_votes[candidate_name] += 1
-    
-    # Winning calculation
+#print(f"Total votes cast: {total_votes:,}")
 
-print(f"Total votes cast: {total_votes:,}")
+with open(output_file_path, "w") as txt_file:
 
-# Find the percentage of votes
-for candidate in candidate_options:
-    votes = candidate_votes[candidate]
-    percentage = votes/total_votes*100
-    print(f"{candidate}: {percentage:.1f}% ({votes:,})")
+    election_results = (
+        f"\nElection Results\n"
+        f"-------------------------\n"
+        f"Total Votes: {total_votes:,}\n"
+        f"-------------------------\n"
+    )
 
-    # Determine the winning candidate
-    if (votes>winning_count) and (percentage>winning_percentage):
-        #if condition is true set winning variables to this value
-        winning_count = votes
-        winning_percentage = percentage
-        winning_candidate = candidate
+    print(election_results,end="")
 
-# Prin the winning candidate
-print(
-    f"-------------------------\n",
-    f"Winner\n",
-    f"-------------------------\n",
-    f"Candidate: {winning_candidate}\n",
-    f"Percentage: {winning_percentage:.1f}%\n",
-    f"Votes: {winning_count:,}\n")
+    txt_file.write(election_results)
 
-# Module code, doesn't produce indent
-winning_candidate_summary = (
-    f"-------------------------\n"
-    f"Winner: {winning_candidate}\n"
-    f"Winning Vote Count: {winning_count:,}\n"
-    f"Winning Percentage: {winning_percentage:.1f}%\n"
-    f"-------------------------\n")
-print(winning_candidate_summary)
+    # Find the percentage of votes
+    for candidate in candidate_options:
+        votes = candidate_votes[candidate]
+        percentage = votes/total_votes*100
+        # print(f"{candidate}: {percentage:.1f}% ({votes:,})")
 
-#The data we need to retrieve
-# 1. The total number of votes cast
-# 2. A complete list of candidates who received votes
-# 3. The percentag of vots each candiat won
-# 4. The toal number of votes each candidate won
-# 5. The winner of the election based on popular vote.
+        # saves to one variable so that we can print and save to file
+        candidate_results = f"{candidate}: {percentage:.1f}% ({votes:,})\n"
 
+        print(candidate_results)
+        txt_file.write(candidate_results)
+
+        # Determine the winning candidate
+        if (votes>winning_count) and (percentage>winning_percentage):
+            #if condition is true set winning variables to this value
+            winning_count = votes
+            winning_percentage = percentage
+            winning_candidate = candidate
+
+    # Print the winning candidate, My code produces an indent at winner
+    # print(
+    #     f"-------------------------\n",
+    #     f"Winner\n",
+    #     f"-------------------------\n",
+    #     f"Candidate: {winning_candidate}\n",
+    #     f"Percentage: {winning_percentage:.1f}%\n",
+    #     f"Votes: {winning_count:,}\n")
+
+    # Module code, doesn't produce indent
+    winning_candidate_summary = (
+        f"-------------------------\n"
+        f"Winner: {winning_candidate}\n"
+        f"Winning Vote Count: {winning_count:,}\n"
+        f"Winning Percentage: {winning_percentage:.1f}%\n"
+        f"-------------------------\n")
+    # Print the winning candidate summary to the terminal
+    print(winning_candidate_summary)
+
+    # Print to the text file
+    txt_file.write(winning_candidate_summary)
